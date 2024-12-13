@@ -2,6 +2,14 @@ import math
 import re
 import sys
 
+
+def mul_str(str):
+    split = str[4:-1].split(',')
+    l_val = int(split[0])
+    r_val = int(split[1])
+    return l_val * r_val
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python day_3.py <file_path>")
@@ -18,29 +26,23 @@ if __name__ == "__main__":
             for line in file:
                 input += line
         mul_pattern = re.compile(r'mul\(\d{1,3},\d{1,3}\)')
-        conditional_pattern = re.compile(r'do\(\).*don\'t\(\)|^.*(?!)(do\(\)|don\'t\(\))|do\(\).*$')
+        conditional_pattern = re.compile(r'mul\(\d{1,3},\d{1,3}\)|do\(\)|don\'t\(\)')
+        mul_enabled = True
         matches = re.findall(mul_pattern, input)
-        conditional_matches_1 = re.findall(r'do\(\).*don\'t\(\)', input)
-        conditional_matches_2 = re.findall(r'do\(\)(?!.*don\'t\(\)).*$', input)
-        conditional_matches_3 = re.findall(r'^.*?(?=do\(\)|don\'t\(\))', input)
+        conditional_matches = re.findall(conditional_pattern, input)
         # conditional_matches_4 = re.findall(r'do\(\).*don\'t\(\)', input)
         print(matches)
-        print(conditional_matches_1)
-        print(conditional_matches_2)
-        print(conditional_matches_3)
-        for match in (conditional_matches_1 + conditional_matches_2 + conditional_matches_3):
-            mul_matches = re.findall(mul_pattern, match)
-            print(f"Mul matches: {mul_matches}")
-            for mul_match in mul_matches:
-                split = mul_match[4:-1].split(',')
-                l_val = int(split[0])
-                r_val = int(split[1])
-                conditional_sum_mul += l_val * r_val
+        print(conditional_matches)
+        for match in conditional_matches:
+            if mul_enabled and match.startswith('mul'):
+                conditional_sum_mul += mul_str(match)
+            elif match == 'do()':
+                mul_enabled = True
+            else:
+                mul_enabled = False
+            # print(mul_enabled, match, conditional_sum_mul)
         for match in matches:
-            split = match[4:-1].split(',')
-            l_val = int(split[0])
-            r_val = int(split[1])
-            sum_mul += l_val * r_val
+            sum_mul += mul_str(match)
         print(f"Sum of mul: {sum_mul}")
         print(f"Cond. sum of mul: {conditional_sum_mul}")
     except FileNotFoundError:
