@@ -2,7 +2,7 @@ import math
 import re
 import sys
 
-xmas = 'XMAS'
+xmas = ['X', 'M', 'A', 'S']
 xmas_reverse = xmas[::-1]
 
 HORIZONTAL = 0
@@ -34,16 +34,30 @@ def get_coords(row, col, direction):
     if direction == BOTTOM_LEFT:
         return [(row, col), (row + 1, col - 1), (row + 2, col - 2), (row + 3, col - 3)]
 
+def get_text(table, row, col, direction):
+    coords = get_coords(row, col, HORIZONTAL)
+    to_check = (table[coords[0][0]][coords[0][1]] +
+                table[coords[1][0]][coords[1][1]] +
+                table[coords[2][0]][coords[2][1]] +
+                table[coords[3][0]][coords[3][1]])
+    return coords, to_check
 
-def xmas(table):
+def xmas_counter(table):
+    xmas_coords = []
     width = len(table[0])
     height = len(table)
     for row in range(height):
         for col in range(width):
             if table[row][col] == xmas[0]:
                 if col <= width - len(xmas):
-                    coords = [(row, col)]
-                    to_check = table[row][col] + table[row][col + 1] + table[row][col + 2] + table[row][col + 3]
+                    coords, to_check = get_text(table, row, col, HORIZONTAL)
+                    if to_check == xmas:
+                        xmas_coords.append(coords)
+                if col >= len(xmas) - 1:
+                    coords, to_check = get_text(table, row, col, HORIZONTAL_REVERSE)
+                    if to_check == xmas:
+                        xmas_coords.append(coords)
+
     split = str[4:-1].split(',')
     l_val = int(split[0])
     r_val = int(split[1])
