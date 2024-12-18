@@ -3,8 +3,16 @@ import re
 import sys
 
 
+def correct_lists(incorrect_lists, before_dict, after_dict):
+    corrected_lists = []
+    for incorrect_list in incorrect_lists:
+
+    return corrected_lists
+
+
 def check_problem_one(items, before_dict, after_dict):
     valid_lists = []
+    incorrect_list = []
     for list_to_check in items:
         valid_list = True
         for i in range(len(list_to_check) - 1):
@@ -13,8 +21,7 @@ def check_problem_one(items, before_dict, after_dict):
             if not next_item in after_dict[item]:
                 valid_list = False
                 break
-        if valid_list:
-            valid_lists.append(list_to_check)
+        valid_lists.append(list_to_check) if valid_list else incorrect_list.append(list_to_check)
     return valid_lists
 
 
