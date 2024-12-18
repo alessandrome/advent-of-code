@@ -3,6 +3,21 @@ import re
 import sys
 
 
+def check_problem_one(items, before_dict, after_dict):
+    valid_lists = []
+    for list_to_check in items:
+        valid_list = True
+        for i in range(len(list_to_check) - 1):
+            next_item = list_to_check[i + 1]
+            item = list_to_check[i]
+            if not next_item in after_dict[item]:
+                valid_list = False
+                break
+        if valid_list:
+            valid_lists.append(list_to_check)
+    return valid_lists
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python day_5.py <file_path>")
@@ -25,14 +40,22 @@ if __name__ == "__main__":
                             before_items[after] = []
                         if before not in after_items:
                             after_items[before] = []
+                        if after not in after_items:
+                            after_items[after] = []
+                        if before not in before_items:
+                            before_items[before] = []
                         # Add to dictionary
                         before_items[after].append(before)
                         after_items[before].append(after)
                 else:
                     lines_to_check.append([int(el) for el in line.split(",")])
-        print(before_items)
-        print(after_items)
-        print(lines_to_check)
+        print(f"Before dict: {before_items}")
+        print(f"After dict: {after_items}")
+        print(f"Lines to Check: {lines_to_check}")
+        valid_lists = check_problem_one(lines_to_check, before_items, after_items)
+        print(f"Num. of valid lists: {len(valid_lists)}")
+        used_pages = [l[int(len(l)/2)] for l in valid_lists]
+        print(f"Sum middle-pages: {sum(used_pages)}")
     except FileNotFoundError:
         print(f"Error: File '{file_path}' not found.")
         sys.exit(2)
